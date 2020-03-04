@@ -1,5 +1,20 @@
 <template>
   <div class="container my-4" v-if="profileData">
+    <div
+      class="alert alert-warning alert-dismissible fade show"
+      role="alert"
+      v-if="notification!==''"
+    >
+      {{notification}}
+      <button
+        type="button"
+        class="close"
+        @click="notification=''"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
     <div class="row justify-content-center">
       <div class="col-md-12">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -142,17 +157,13 @@
 
                 <div class="container my-4">
                   <div class="form-group">
-                    <label for="description" class="col-sm-2 control-label">Descripci?n</label>
+                    <label for="description" class="col-sm-2 control-label">Descripcion</label>
                     <div class="col-sm-12">
-                      <textarea
-                        rows="7"
-                        id="description"
-                        required
+                      <ckeditor
+                        :editor="editor"
                         v-model="profile.description"
-                        name="description"
-                        class="form-control"
-                        maxlength="600"
-                      ></textarea>
+                        :config="editorConfig"
+                      ></ckeditor>
                     </div>
                   </div>
                   <div class="container col-sm-8 text-center center-block">
@@ -238,7 +249,6 @@
                 <img :src="'/uploads/profile/'+item" alt />
               </div>
             </div>
-
           </div>
           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             <div class="form-group">
@@ -421,15 +431,21 @@ input#file-1 {
 </style>
 
 <script>
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export default {
   components: {},
   data() {
     return {
+      editor: ClassicEditor,
+      editorData: "<p>Rich-text editor content.</p>",
+      editorConfig: {
+      },
       show: true,
       categoriesData: [],
       notification: "",
       profileData: {},
-      tempImages: []
+      tempImages: [],
+      output: ""
     };
   },
 
@@ -473,6 +489,7 @@ export default {
       data.append("index", index);
       axios.post("profile/image/", data).then(response => {
         this.profileData = response.data.profile;
+        this.notification = response.data.success;
         console.log("image deleted  > ", response);
       });
     },
@@ -505,7 +522,6 @@ export default {
       formData.append("phone_number", this.profile.phone_number);
       formData.append("tarifa", this.profile.tarifa);
       formData.append("horario", this.profile.horario);
-
       formData.append("text", this.profile.text);
       formData.append("category_id", this.profile.category_id);
 
@@ -513,10 +529,9 @@ export default {
       this.axios
         .post("/api/profile/create", formData)
         .then(function(response) {
-          currentObj.output = response;
-          this.notification = response.data.success;
-          currentObj.success = response.data.success;
-          this.profileData = response.data.profile;
+          currentObj.notification = response.data.success;
+          currentObj.profileData = response.data.profile;
+          console.log("datos guardados");
         })
         .catch(function(error) {
           currentObj.output = error;
@@ -559,7 +574,7 @@ export default {
     filterImages(images) {
       if (images) images = JSON.parse(images);
       return images;
-    },
+    }
   }
 };
 </script>

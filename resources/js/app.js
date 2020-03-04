@@ -23,12 +23,14 @@ import Vue from "vue";
 import * as VueGoogleMaps from "vue2-google-maps";
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 
 import wysiwyg from "vue-wysiwyg";
 
 Vue.use(wysiwyg, {}); // config is optional. more below
 Vue.use(VueAxios, axios);
+Vue.use( CKEditor );
 Vue.use(VueGoogleMaps, {
     load: {
         key: "AIzaSyAbUQ8c9GCYUCSLi5DC71tDpJrXMet1fak",

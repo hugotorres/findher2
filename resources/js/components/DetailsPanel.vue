@@ -79,7 +79,7 @@
               </div>
             </div>
             <div class="col-sm-6 my-4">
-              <div class="product-description">{{producto.description}}</div>
+              <div class="product-description" v-html="producto.description"></div>
               <div class="category">{{producto.category}}</div>
               <div class="rating" v-show="producto.rating">{{producto.rating}}</div>
               <div class="horario">
